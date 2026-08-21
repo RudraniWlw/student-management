@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Record Management System</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- Point this at your deployed backend when not running locally -->
+  <script>window.API_BASE_URL = 'http://localhost:5000/api';</script>
+</head>
+<body class="w-full min-h-screen flex">
+
+  <!-- Sidebar -->
+  <aside class="w-60 min-h-screen bg-white border-r border-gray-100 flex-shrink-0 flex flex-col py-6 px-4">
+    <div class="flex items-center gap-2 px-3 mb-8">
+      <div class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
+        <i data-lucide="graduation-cap" class="w-5 h-5 text-purple-500"></i>
+      </div>
+      <h1 class="font-bold text-lg">Student MS</h1>
+    </div>
+    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2">Main</p>
+    <nav class="space-y-1 mb-6">
+      <a href="#dashboard" data-page="dashboard" class="sidebar-item active flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium"><i data-lucide="layout-dashboard" class="w-4 h-4"></i>Dashboard</a>
+      <a href="#students" data-page="students" class="sidebar-item flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium"><i data-lucide="users" class="w-4 h-4"></i>Students</a>
+      <a href="#courses" data-page="courses" class="sidebar-item flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium"><i data-lucide="book-open" class="w-4 h-4"></i>Courses</a>
+      <a href="#attendance" data-page="attendance" class="sidebar-item flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium"><i data-lucide="calendar-check" class="w-4 h-4"></i>Attendance</a>
+      <a href="#grades" data-page="grades" class="sidebar-item flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium"><i data-lucide="bar-chart-2" class="w-4 h-4"></i>Marks &amp; Grades</a>
+      <a href="#reports" data-page="reports" class="sidebar-item flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium"><i data-lucide="file-text" class="w-4 h-4"></i>Reports</a>
+    </nav>
+    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2">Records</p>
+    <nav class="space-y-1 mb-6">
+      <a href="#students" data-page="students" class="sidebar-item flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium"><i data-lucide="folder" class="w-4 h-4"></i>Student Records</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col min-h-screen overflow-hidden">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-100 px-8 py-4 flex items-center justify-between flex-shrink-0">
+      <div>
+        <h2 class="font-semibold text-xl" id="page-heading-text">Student Dashboard</h2>
+        <p class="text-xs text-gray-400 mt-0.5">Academic Year 2026-27</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="relative">
+          <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <input type="text" id="global-search" placeholder="Search students..." class="pl-9 pr-4 py-2 text-sm w-56 bg-gray-50">
+          <div id="global-search-results" class="hidden"></div>
+        </div>
+        <div id="cloud-status" class="flex items-center gap-1.5 text-xs text-green-600 bg-green-50 px-3 py-1.5 rounded-full">
+          <i data-lucide="cloud" class="w-3.5 h-3.5"></i><span id="cloud-status-label">Checking...</span>
+        </div>
+        <div class="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-semibold text-sm">AD</div>
+      </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto p-8">
+
+      <!-- Dashboard Page -->
+      <div id="page-dashboard" class="page active">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+          <div id="stat-total" class="card stat-card">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="w-9 h-9 rounded-xl bg-purple-200/50 flex items-center justify-center"><i data-lucide="users" class="w-5 h-5 text-purple-500"></i></div>
+            </div>
+            <p class="text-2xl font-bold">—</p>
+            <p id="stat-total-label" class="text-sm text-gray-500 mt-0.5">Total Students</p>
+          </div>
+          <div id="stat-active" class="card stat-card">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="w-9 h-9 rounded-xl bg-blue-200/50 flex items-center justify-center"><i data-lucide="user-check" class="w-5 h-5 text-blue-500"></i></div>
+            </div>
+            <p class="text-2xl font-bold">—</p>
+            <p id="stat-active-label" class="text-sm text-gray-500 mt-0.5">Active Students</p>
+          </div>
+          <div id="stat-attendance" class="card stat-card">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="w-9 h-9 rounded-xl bg-green-200/50 flex items-center justify-center"><i data-lucide="calendar-check" class="w-5 h-5 text-green-500"></i></div>
+            </div>
+            <p class="text-2xl font-bold">—</p>
+            <p id="stat-attendance-label" class="text-sm text-gray-500 mt-0.5">Avg Attendance</p>
+          </div>
+          <div id="stat-gpa" class="card stat-card">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="w-9 h-9 rounded-xl bg-orange-200/50 flex items-center justify-center"><i data-lucide="award" class="w-5 h-5 text-orange-500"></i></div>
+            </div>
+            <p class="text-2xl font-bold">—</p>
+            <p id="stat-gpa-label" class="text-sm text-gray-500 mt-0.5">Avg GPA</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8">
+          <div class="card p-6">
+            <h3 id="chart-enrollment-title" class="font-semibold mb-4">Enrollment Trend</h3>
+            <canvas id="enrollmentChart" height="180"></canvas>
+          </div>
+          <div class="card p-6">
+            <h3 id="chart-attendance-title" class="font-semibold mb-4">Attendance Overview</h3>
+            <canvas id="attendanceChart" height="180"></canvas>
+          </div>
+        </div>
+
+        <div class="card p-6">
+          <h3 id="recent-records-title" class="font-semibold mb-4">Recent Students</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="text-left text-gray-400 border-b border-gray-100">
+                  <th class="pb-3 font-medium">ID</th><th class="pb-3 font-medium">Name</th><th class="pb-3 font-medium">Department</th>
+                  <th class="pb-3 font-medium">Year</th><th class="pb-3 font-medium">Attendance</th><th class="pb-3 font-medium">GPA</th><th class="pb-3 font-medium">Status</th>
+                </tr>
+              </thead>
+              <tbody id="dashboard-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Students Page -->
+      <div id="page-students" class="page">
+        <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+          <div class="flex items-center gap-3">
+            <div class="relative">
+              <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+              <input type="text" id="student-search" placeholder="Search students..." class="pl-9 pr-4 py-2 text-sm w-52 bg-white">
+            </div>
+            <select id="dept-filter" class="text-sm bg-white py-2 px-3">
+              <option value="">All Departments</option><option>Computer Science</option><option>Electronics</option><option>Mechanical</option><option>Civil</option>
+            </select>
+            <select id="year-filter" class="text-sm bg-white py-2 px-3">
+              <option value="">All Years</option><option>1</option><option>2</option><option>3</option><option>4</option>
+            </select>
+          </div>
+          <button class="btn-primary text-sm flex items-center gap-2" onclick="Students.showForm('add')"><i data-lucide="plus" class="w-4 h-4"></i>Add Student</button>
+        </div>
+        <div class="card overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-left text-gray-400 border-b border-gray-100">
+                <th class="p-4 font-medium">ID</th><th class="p-4 font-medium">Name</th><th class="p-4 font-medium">Department</th>
+                <th class="p-4 font-medium">Year</th><th class="p-4 font-medium">Attendance</th><th class="p-4 font-medium">GPA</th>
+                <th class="p-4 font-medium">Status</th><th class="p-4 font-medium">Action</th>
+              </tr>
+            </thead>
+            <tbody id="students-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Add / Edit Student Page -->
+      <div id="page-student-form" class="page">
+        <div class="card p-8 max-w-3xl">
+          <h3 id="student-form-title" class="font-semibold text-lg mb-6">Add New Student</h3>
+          <form id="student-form" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div><label class="text-xs font-medium text-gray-500 mb-1 block" for="f-sid">Student ID</label><input id="f-sid" type="text" class="w-full" required></div>
+            <div><label class="text-xs font-medium text-gray-500 mb-1 block" for="f-name">Full Name</label><input id="f-name" type="text" class="w-full" required></div>
+            <div><label class="text-xs font-medium text-gray-500 mb-1 block" for="f-email">Email</label><input id="f-email" type="email" class="w-full" required></div>
+            <div><label class="text-xs font-medium text-gray-500 mb-1 block" for="f-phone">Phone</label><input id="f-phone" type="tel" class="w-full"></div>
+            <div><label class="text-xs font-medium text-gray-500 mb-1 block" for="f-dob">Date of Birth</label><input id="f-dob" type="date" class="w-full"></div>
+            <div><label class="text-xs font-medium text-gray-500 mb-1 block" for="f-dept">Department</label>
+              <select id="f-dept" class="w-full"><option>Computer Science</option><option>Electronics</option><option>Mechanical</option><option>Civil</option></select>
+            </div>
+            <div><label class="text-xs font-medium text-gray-500 mb-1 block" for="f-course">Course</label><input id="f-course" type="text" class="w-full"></div>
+            <div><label class="text-xs font-medium text-gray-500 mb-1 block" for="f-year">Year</label>
+              <select id="f-year" class="w-full"><option>1</option><option>2</option><option>3</option><option>4</option></select>
+            </div>
+            <div><label class="text-xs font-medium text-gray-500 mb-1 block" for="f-sem">Semester</label>
+              <select id="f-sem" class="w-full"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
+            </div>
+            <div><label class="text-xs font-medium text-gray-500 mb-1 block" for="f-enroll">Enrollment Date</label><input id="f-enroll" type="date" class="w-full"></div>
+            <div><label class="text-xs font-medium text-gray-500 mb-1 block" for="f-status">Status</label>
+              <select id="f-status" class="w-full"><option>Active</option><option>On Leave</option><option>Graduated</option></select>
+            </div>
+            <div class="md:col-span-2">
+              <label class="text-xs font-medium text-gray-500 mb-1 block" for="f-address">Address</label><textarea id="f-address" class="w-full" rows="2"></textarea>
+            </div>
+            <div class="md:col-span-2 flex gap-3 mt-2">
+              <button type="submit" class="btn-primary text-sm" id="save-student-btn">Save Student</button>
+              <button type="button" class="btn-secondary text-sm" onclick="showPage('students')">Cancel</button>
+            </div>
+          </form>
+          <p id="form-msg" class="mt-3 text-sm hidden"></p>
+        </div>
+      </div>
+
+      <!-- Profile Page -->
+      <div id="page-profile" class="page">
+        <div class="card p-8 max-w-4xl">
+          <div class="flex items-start gap-6 mb-8">
+            <div class="w-20 h-20 rounded-2xl bg-purple-100 flex items-center justify-center text-purple-600 text-2xl font-bold" id="profile-avatar">-</div>
+            <div id="profile-info"></div>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6" id="profile-stats"></div>
+          <h4 class="font-semibold mb-3">Academic Details</h4>
+          <div id="profile-details" class="text-sm text-gray-600 space-y-1"></div>
+        </div>
+      </div>
+
+      <!-- Attendance Page -->
+      <div id="page-attendance" class="page">
+        <div class="card p-6 mb-6">
+          <form id="attendance-form" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+            <div class="md:col-span-2">
+              <label class="text-xs font-medium text-gray-500 mb-1 block">Student</label>
+              <select id="attendance-student-select" class="w-full"></select>
+            </div>
+            <div>
+              <label class="text-xs font-medium text-gray-500 mb-1 block">Date</label>
+              <input type="date" id="attendance-date" class="w-full" required>
+            </div>
+            <div>
+              <label class="text-xs font-medium text-gray-500 mb-1 block">Status</label>
+              <select id="attendance-status" class="w-full"><option>Present</option><option>Absent</option><option>Late</option></select>
+            </div>
+            <div class="md:col-span-4">
+              <button type="submit" class="btn-primary text-sm">Add Attendance</button>
+              <span class="ml-4 text-sm text-gray-500">Attendance: <strong id="attendance-percentage">—</strong></span>
+            </div>
+          </form>
+        </div>
+        <div class="card overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-left text-gray-400 border-b border-gray-100">
+                <th class="p-3 font-medium">Date</th><th class="p-3 font-medium">Status</th><th class="p-3 font-medium">Recorded</th><th class="p-3 font-medium">Action</th>
+              </tr>
+            </thead>
+            <tbody id="attendance-history-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Courses Page -->
+      <div id="page-courses" class="page">
+        <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+          <div class="flex items-center gap-3">
+            <div class="relative">
+              <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+              <input type="text" id="course-search" placeholder="Search courses..." class="pl-9 pr-4 py-2 text-sm w-52 bg-white">
+            </div>
+            <select id="course-dept-filter" class="text-sm bg-white py-2 px-3">
+              <option value="">All Departments</option><option>Computer Science</option><option>Electronics</option><option>Mechanical</option><option>Civil</option>
+            </select>
+          </div>
+          <button class="btn-primary text-sm flex items-center gap-2" onclick="Courses.openAddForm()"><i data-lucide="plus" class="w-4 h-4"></i>Add Course</button>
+        </div>
+        <div class="card overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-left text-gray-400 border-b border-gray-100">
+                <th class="p-4 font-medium">Code</th><th class="p-4 font-medium">Name</th><th class="p-4 font-medium">Department</th><th class="p-4 font-medium">Credits</th><th class="p-4 font-medium">Action</th>
+              </tr>
+            </thead>
+            <tbody id="courses-table-body"></tbody>
+          </table>
+        </div>
+
+        <!-- Add/Edit Course Modal -->
+        <div id="course-form-modal" class="modal-overlay hidden">
+          <div class="card p-6 w-full max-w-md">
+            <h3 id="course-form-title" class="font-semibold text-lg mb-4">Add Course</h3>
+            <form id="course-form" class="space-y-4">
+              <div><label class="text-xs font-medium text-gray-500 mb-1 block">Course Code</label><input id="c-code" type="text" class="w-full" required></div>
+              <div><label class="text-xs font-medium text-gray-500 mb-1 block">Course Name</label><input id="c-name" type="text" class="w-full" required></div>
+              <div><label class="text-xs font-medium text-gray-500 mb-1 block">Department</label>
+                <select id="c-dept" class="w-full"><option>Computer Science</option><option>Electronics</option><option>Mechanical</option><option>Civil</option></select>
+              </div>
+              <div><label class="text-xs font-medium text-gray-500 mb-1 block">Credits</label><input id="c-credits" type="number" min="1" max="10" class="w-full" required></div>
+              <div class="flex gap-3 pt-2">
+                <button type="submit" class="btn-primary text-sm">Save</button>
+                <button type="button" class="btn-secondary text-sm" onclick="Courses.closeForm()">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Marks & Grades Page -->
+      <div id="page-grades" class="page">
+        <div class="card p-6 mb-6">
+          <form id="grade-form" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+            <div>
+              <label class="text-xs font-medium text-gray-500 mb-1 block">Student</label>
+              <select id="grade-student-select" class="w-full"></select>
+            </div>
+            <div>
+              <label class="text-xs font-medium text-gray-500 mb-1 block">Course</label>
+              <select id="grade-course-select" class="w-full"></select>
+            </div>
+            <div>
+              <label class="text-xs font-medium text-gray-500 mb-1 block">Semester</label>
+              <select id="grade-semester" class="w-full"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
+            </div>
+            <div>
+              <label class="text-xs font-medium text-gray-500 mb-1 block">Marks (0-100)</label>
+              <input id="grade-marks" type="number" min="0" max="100" class="w-full" required>
+            </div>
+            <div class="md:col-span-4">
+              <button type="submit" class="btn-primary text-sm">Add Grade</button>
+              <span class="ml-4 text-sm text-gray-500">GPA: <strong id="grade-gpa-display">—</strong></span>
+            </div>
+          </form>
+        </div>
+        <div class="card overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-left text-gray-400 border-b border-gray-100">
+                <th class="p-3 font-medium">Course</th><th class="p-3 font-medium">Semester</th><th class="p-3 font-medium">Marks</th><th class="p-3 font-medium">Grade</th><th class="p-3 font-medium">Action</th>
+              </tr>
+            </thead>
+            <tbody id="grades-history-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Reports Page -->
+      <div id="page-reports" class="page">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
+          <div class="card p-5 text-center"><p class="text-2xl font-bold" id="report-total">0</p><p class="text-sm text-gray-500 mt-1">Total Records</p></div>
+          <div class="card p-5 text-center"><p class="text-2xl font-bold text-green-600" id="report-attendance">0%</p><p class="text-sm text-gray-500 mt-1">Avg Attendance</p></div>
+          <div class="card p-5 text-center"><p class="text-2xl font-bold text-purple-600" id="report-gpa">0</p><p class="text-sm text-gray-500 mt-1">Avg GPA</p></div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8">
+          <div class="card p-6"><h3 class="font-semibold mb-4">Department Distribution</h3><canvas id="deptChart" height="200"></canvas></div>
+          <div class="card p-6"><h3 class="font-semibold mb-4">Grade Distribution</h3><canvas id="gradeChart" height="200"></canvas></div>
+        </div>
+        <div class="card p-5 inline-flex items-center gap-3">
+          <span id="report-cloud-dot" class="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse"></span>
+          <div>
+            <p class="text-sm font-medium" id="report-cloud-text">Cloud Data Status: Checking...</p>
+            <p class="text-xs text-gray-400" id="report-cloud-sync">Last Sync: —</p>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/students.js"></script>
+  <script src="js/attendance.js"></script>
+  <script src="js/courses.js"></script>
+  <script src="js/grades.js"></script>
+  <script src="js/reports.js"></script>
+</body>
+</html>

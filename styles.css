@@ -1,0 +1,33 @@
+* { font-family: 'DM Sans', sans-serif; }
+body { background: #f8f7fc; color: #2d2d3a; }
+.sidebar-item { transition: all 0.2s; cursor: pointer; }
+.sidebar-item:hover, .sidebar-item.active { background: #ede9f6; color: #6c5ce7; }
+.stat-card { border-radius: 16px; padding: 1.25rem 1.5rem; }
+.page { display: none; }
+.page.active { display: block; }
+.badge { padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; }
+.badge-active { background: #e8f5e9; color: #2e7d32; }
+.badge-leave { background: #fff3e0; color: #e65100; }
+.badge-graduated { background: #ede7f6; color: #5e35b1; }
+.card { background: #fff; border-radius: 16px; border: 1px solid #f0eef5; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+input, select, textarea { border: 1px solid #e8e6f0; border-radius: 12px; padding: 10px 14px; outline: none; transition: border 0.2s; }
+input:focus, select:focus, textarea:focus { border-color: #b8b0d8; }
+.btn-primary { background: #7c6dd8; color: #fff; border-radius: 12px; padding: 10px 20px; font-weight: 600; }
+.btn-primary:hover { background: #6c5ce7; }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-secondary { background: #f0eef5; color: #5a5278; border-radius: 12px; padding: 10px 20px; font-weight: 500; }
+canvas { max-width: 100%; }
+.scroll-area { max-height: calc(100 * min(var(--vh, 1vh), 1vh) - 72px); overflow-y: auto; }
+
+/* Modal used by Courses add/edit */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(45, 45, 58, 0.35);
+  display: flex; align-items: center; justify-content: center; z-index: 40;
+}
+.modal-overlay.hidden { display: none; }
+
+#global-search-results {
+  position: absolute; top: 44px; left: 0; width: 100%;
+  background: #fff; border-radius: 12px; border: 1px solid #f0eef5;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08); z-index: 30; max-height: 260px; overflow-y: auto;
+}
